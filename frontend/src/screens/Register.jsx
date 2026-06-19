@@ -16,7 +16,7 @@ export default function Register() {
   // If already logged in, redirect to home
   useEffect(() => {
     if (localStorage.getItem('user')) {
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [navigate]);
 
@@ -32,8 +32,10 @@ export default function Register() {
 
     try {
       await apiService.register(name, email, password, gender, age);
-      // Automatically redirect to login page after successful registration
-      navigate('/login', { state: { registered: true } });
+      // Auto-login after successful registration
+      const loginResp = await apiService.login(email, password);
+      localStorage.setItem('user', JSON.stringify(loginResp.user));
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
       setError(err.message || 'Registration failed. Email might already be registered.');

@@ -33,7 +33,7 @@ describe('Exhaustive Button Visibility & Clickability Tests', function () {
                     // Try to load the route
                     try {
                         await driver.manage().window().setRect(vp);
-                        await driver.get(`${config.baseUrl}${route}`);
+                        await driver.get(`${config.BASE_URL}/#${route}`);
                         
                         // We use a short timeout because these buttons might not actually exist on every page
                         // but testing their absence/presence gracefully is part of exhaustive testing

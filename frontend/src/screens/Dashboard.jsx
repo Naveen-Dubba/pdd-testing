@@ -67,7 +67,7 @@ export default function Dashboard() {
             </Link>
             <Link to="/chatbot" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MessageSquare size={16} />
-              Consult Chat Stylist
+              Style Chat
             </Link>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function Dashboard() {
         <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.35rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
             <Activity size={20} color="var(--primary)" />
-            <span>Styling Metrics</span>
+            <span>Quick Actions</span>
           </h2>
 
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -158,7 +158,7 @@ export default function Dashboard() {
         <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.35rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
             <Sparkles size={20} color="var(--accent)" />
-            <span>Latest Style Persona</span>
+            <span>Style Recommendation</span>
           </h2>
 
           {loading ? (

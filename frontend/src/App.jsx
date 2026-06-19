@@ -28,6 +28,15 @@ export default function App() {
           </RequireAuth>
         } />
 
+        <Route path="/dashboard" element={
+          <RequireAuth>
+            <Layout>
+              <Dashboard />
+            </Layout>
+          </RequireAuth>
+        } />
+
+
         <Route path="/analyze" element={
           <RequireAuth>
             <Layout>

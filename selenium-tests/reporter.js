@@ -2,14 +2,14 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 
-async function generateReport(testResults) {
+async function generateReport(testResults, platform = 'Web') {
   const reportsDir = path.join(__dirname, 'reports');
   if (!fs.existsSync(reportsDir)) {
     fs.mkdirSync(reportsDir, { recursive: true });
   }
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const outputPath = path.join(reportsDir, `web_test_report_${timestamp}.xlsx`);
+  const outputPath = path.join(reportsDir, `${platform.toLowerCase()}_test_report_${timestamp}.xlsx`);
 
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'Selenium Web Automator';
@@ -28,7 +28,7 @@ async function generateReport(testResults) {
   // Title
   wsSummary.mergeCells('A1:D1');
   const titleCell = wsSummary.getCell('A1');
-  titleCell.value = 'Vastra Web E2E Selenium Test execution Report';
+  titleCell.value = `Vastra ${platform} E2E Test Execution Report`;
   titleCell.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
   titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '1F497D' } };
   titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -38,7 +38,7 @@ async function generateReport(testResults) {
   const metadata = [
     ['Execution Timestamp', new Date().toLocaleString()],
     ['Automation Engine', 'Selenium WebDriver (Chrome)'],
-    ['Target Platform', 'Vastra Web React App'],
+    ['Target Platform', `Vastra ${platform} App`],
     ['Test Environment', 'Localhost / CI Pipeline']
   ];
 

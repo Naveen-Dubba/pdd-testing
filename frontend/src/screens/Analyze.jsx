@@ -141,7 +141,7 @@ export default function Analyze() {
       <div style={{ textAlign: 'left', marginBottom: '2rem' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Sparkles color="var(--primary)" />
-          <span>Style Analysis</span>
+          <span>Face Shape Analysis</span>
         </h1>
         <p style={{ color: 'var(--text-secondary)' }}>
           Create your styling profile using automated AI image analysis or manual configurations.
@@ -251,7 +251,7 @@ export default function Analyze() {
                 }}
               />
               <Upload size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
-              <h3 style={{ fontSize: '1.15rem', marginBottom: '0.25rem' }}>Upload your photo</h3>
+              <h3 style={{ fontSize: '1.15rem', marginBottom: '0.25rem' }}>Step 1: Upload your photo</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Supports JPG, PNG (Max 4MB)</p>
             </div>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.5rem' }}>

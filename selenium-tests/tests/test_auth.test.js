@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { initDriver, takeScreenshot, globalResults } = require('../conftest');
+const { initDriver, takeScreenshot, globalResults, ensureLoggedIn } = require('../conftest');
 const { By, until } = require('selenium-webdriver');
 const config = require('../config');
 
@@ -9,8 +9,26 @@ describe('Web Authentication and Validation Suite', function () {
 
   before(async function () {
     driver = await initDriver();
+    // Pre-register the test user so TC-AUTH-20 can log in successfully
     await driver.get(config.BASE_URL);
+    await driver.sleep(500);
+    try {
+      await driver.executeScript(`
+        fetch('${config.BACKEND_URL}/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: '${config.TEST_NAME}',
+            email: '${config.TEST_EMAIL}',
+            password: '${config.TEST_PASSWORD}',
+            gender: 'Male', age: 25
+          })
+        });
+      `);
+      await driver.sleep(800);
+    } catch (e) { /* ignore - user may already exist */ }
   });
+
 
   after(async function () {
     if (driver) {

@@ -22,7 +22,7 @@ export default function Layout({ children }) {
   const user = userJson ? JSON.parse(userJson) : { name: 'Guest', email: '' };
 
   const menuItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Style Analysis', path: '/analyze', icon: Sparkles },
     { name: 'AI Chat Stylist', path: '/chatbot', icon: MessageSquare },
     { name: 'Styling History', path: '/history', icon: History },
@@ -146,7 +146,7 @@ export default function Layout({ children }) {
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
           >
             <LogOut size={14} />
-            <span>Sign Out</span>
+            <span>Log out</span>
           </button>
         </div>
       </aside>
@@ -245,7 +245,7 @@ export default function Layout({ children }) {
               style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <LogOut size={16} />
-              <span>Sign Out</span>
+              <span>Log out</span>
             </button>
           </div>
         )}

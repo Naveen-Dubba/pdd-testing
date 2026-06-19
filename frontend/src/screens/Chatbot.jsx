@@ -69,7 +69,7 @@ export default function Chatbot() {
       <div style={{ textAlign: 'left' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Sparkles color="var(--primary)" />
-          <span>AI Chat Stylist</span>
+          <span>Style Chat</span>
         </h1>
         <p style={{ color: 'var(--text-secondary)' }}>Get instant recommendations, color coordinates, and style options from your AI assistant.</p>
       </div>
@@ -244,7 +244,7 @@ export default function Chatbot() {
           <input
             type="text"
             className="form-input"
-            placeholder="Type your styling question here..."
+            placeholder="Ask Vastra..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}

@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { initDriver, takeScreenshot, globalResults } = require('../conftest');
+const { initDriver, takeScreenshot, globalResults, ensureLoggedIn } = require('../conftest');
 const { By, until } = require('selenium-webdriver');
 const config = require('../config');
 
@@ -9,14 +9,7 @@ describe('Web Dashboard Navigation and Layout Suite', function () {
 
   before(async function () {
     driver = await initDriver();
-    await driver.get(config.BASE_URL);
-    
-    // Perform standard login once to access dashboard
-    await driver.wait(until.elementLocated(By.id('email')), 5000);
-    await driver.findElement(By.id('email')).sendKeys(config.TEST_EMAIL);
-    await driver.findElement(By.id('password')).sendKeys(config.TEST_PASSWORD);
-    await driver.findElement(By.id('login-button')).click();
-    await driver.wait(until.urlContains('dashboard'), 8000);
+    await ensureLoggedIn(driver);
   });
 
   after(async function () {

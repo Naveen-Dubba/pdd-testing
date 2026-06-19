@@ -13,7 +13,7 @@ export default function Login() {
   // If already logged in, redirect to home
   useEffect(() => {
     if (localStorage.getItem('user')) {
-      navigate('/', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [navigate]);
 
@@ -31,7 +31,7 @@ export default function Login() {
       const response = await apiService.login(email, password);
       // Store user info in localStorage
       localStorage.setItem('user', JSON.stringify(response.user));
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
       setError(err.message || 'Invalid email or password. Please try again.');

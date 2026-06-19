@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { initDriver, takeScreenshot, globalResults } = require('../conftest');
+const { initDriver, takeScreenshot, globalResults, ensureLoggedIn } = require('../conftest');
 const { By, until } = require('selenium-webdriver');
 const config = require('../config');
 
@@ -9,7 +9,7 @@ describe('Web Complete Application E2E Journeys', function () {
 
   before(async function () {
     driver = await initDriver();
-    await driver.get(config.BASE_URL);
+    await ensureLoggedIn(driver);
   });
 
   after(async function () {
@@ -36,12 +36,9 @@ describe('Web Complete Application E2E Journeys', function () {
 
   it('TC-E2E-01: Full user journey - Step 1: Login validation', async function () {
     await recordResult('TC-E2E-01', 'Functional', 'Verify E2E path starts with standard login validation', async () => {
-      await driver.get(config.BASE_URL + '/#/login');
-      await driver.wait(until.elementLocated(By.id('email')), 5000);
-      await driver.findElement(By.id('email')).sendKeys(config.TEST_EMAIL);
-      await driver.findElement(By.id('password')).sendKeys(config.TEST_PASSWORD);
-      await driver.findElement(By.id('login-button')).click();
-      await driver.wait(until.urlContains('dashboard'), 8000);
+      // Login was handled in before() via ensureLoggedIn — verify we are already on dashboard
+      const url = await driver.getCurrentUrl();
+      expect(url).to.contain('dashboard');
       const text = await driver.findElement(By.tagName('body')).getText();
       expect(text).to.contain('Dashboard');
     });
@@ -70,7 +67,7 @@ describe('Web Complete Application E2E Journeys', function () {
       await input.sendKeys('What matches dark blue jeans?');
       const btn = await driver.findElement(By.xpath("//button[@type='submit' or contains(@class, 'send')]"));
       await btn.click();
-      timeSleep = (ms) => new Promise(res => setTimeout(res, ms));
+      const timeSleep = (ms) => new Promise(res => setTimeout(res, ms));
       await timeSleep(2000);
       const body = await driver.findElement(By.tagName('body')).getText();
       expect(body).to.contain('blue jeans');
