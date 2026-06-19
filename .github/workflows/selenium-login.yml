@@ -41,6 +41,7 @@ jobs:
       with:
         name: Web-Test-Report
         path: selenium-tests/reports/
+        retention-days: 30
 
   deploy-gh-pages:
     name: Deploy to GitHub Pages
@@ -119,3 +120,4 @@ jobs:
       with:
         name: App-Test-Report
         path: appium-tests/reports/
+        retention-days: 30
