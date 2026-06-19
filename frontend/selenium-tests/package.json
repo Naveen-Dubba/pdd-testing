@@ -1,0 +1,14 @@
+{
+  "name": "selenium-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "mocha tests/**/*.test.js --timeout 30000",
+    "login": "mocha tests/login.test.js --timeout 30000"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0",
+    "selenium-webdriver": "^4.12.0"
+  }
+}
