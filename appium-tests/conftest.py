@@ -115,48 +115,59 @@ def pytest_runtest_teardown(item, nextitem):
     """
     # Check execution phase report
     rep_call = getattr(item, "rep_call", None)
+    rep_setup = getattr(item, "rep_setup", None)
+    
+    status = "FAIL"
+    duration = 0
+    error_msg = ""
+    
     if rep_call:
         status = "PASS" if rep_call.passed else "FAIL"
         duration = rep_call.duration
         error_msg = str(rep_call.longrepr) if rep_call.failed else ""
-        screenshot = getattr(item, "screenshot_path", "")
+    elif rep_setup and rep_setup.failed:
+        status = "FAIL (Setup)"
+        duration = rep_setup.duration
+        error_msg = str(rep_setup.longrepr)
+
+    screenshot = getattr(item, "screenshot_path", "")
         
-        # Get metadata from test function docstrings
-        description = item.obj.__doc__.strip() if item.obj.__doc__ else "No description"
-        # Determine screen name from test file name
-        filename = os.path.basename(item.fspath)
-        screen_name = "Unknown"
-        if "splash" in filename:
-            screen_name = "Splash Screen"
-        elif "login" in filename:
-            screen_name = "Login Screen"
-        elif "register" in filename:
-            screen_name = "Register Screen"
-        elif "home" in filename:
-            screen_name = "Home Screen"
-        elif "analyze" in filename:
-            screen_name = "Analyze Screen"
-        elif "chatbot" in filename:
-            screen_name = "Chatbot Screen"
-        elif "history" in filename:
-            screen_name = "History Screen"
-        elif "profile" in filename:
-            screen_name = "Profile Screen"
-        elif "settings" in filename:
-            screen_name = "Settings Screen"
-        elif "e2e" in filename:
-            screen_name = "Full E2E Flow"
-            
-        test_case = {
-            "name": item.name,
-            "screen": screen_name,
-            "description": description,
-            "status": status,
-            "duration": duration,
-            "error": error_msg,
-            "screenshot": screenshot
-        }
-        _session_test_results.append(test_case)
+    # Get metadata from test function docstrings
+    description = item.obj.__doc__.strip() if item.obj.__doc__ else "No description"
+    # Determine screen name from test file name
+    filename = os.path.basename(item.fspath)
+    screen_name = "Unknown"
+    if "splash" in filename:
+        screen_name = "Splash Screen"
+    elif "login" in filename:
+        screen_name = "Login Screen"
+    elif "register" in filename:
+        screen_name = "Register Screen"
+    elif "home" in filename:
+        screen_name = "Home Screen"
+    elif "analyze" in filename:
+        screen_name = "Analyze Screen"
+    elif "chatbot" in filename:
+        screen_name = "Chatbot Screen"
+    elif "history" in filename:
+        screen_name = "History Screen"
+    elif "profile" in filename:
+        screen_name = "Profile Screen"
+    elif "settings" in filename:
+        screen_name = "Settings Screen"
+    elif "e2e" in filename:
+        screen_name = "Full E2E Flow"
+        
+    test_case = {
+        "name": item.name,
+        "screen": screen_name,
+        "description": description,
+        "status": status,
+        "duration": duration,
+        "error": error_msg,
+        "screenshot": screenshot
+    }
+    _session_test_results.append(test_case)
 
 def pytest_sessionfinish(session, exitstatus):
     """

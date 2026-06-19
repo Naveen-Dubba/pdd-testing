@@ -4,7 +4,7 @@
   "description": "Enterprise Selenium E2E test suite for Vastra Web App",
   "main": "conftest.js",
   "scripts": {
-    "test": "mocha tests/**/*.test.js --timeout 60000 --exit"
+    "test": "mocha tests/**/*.test.js --require ./conftest.js --timeout 60000 --exit"
   },
   "dependencies": {
     "exceljs": "^4.4.0",
