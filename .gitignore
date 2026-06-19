@@ -46,3 +46,16 @@ app.*.map.json
 
 # Secret API keys — NEVER commit this file
 lib/core/secrets.dart
+
+# Node & Build directories
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+venv/
+**/venv/
+reports/
+**/reports/
+screenshots/
+**/screenshots/
+
