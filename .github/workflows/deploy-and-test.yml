@@ -1,0 +1,118 @@
+name: Deploy and E2E Test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  actions: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    name: Build, Deploy & Test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+            automation/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Install Automation Dependencies
+        working-directory: ./automation
+        run: npm install
+
+      - name: 3. Build Application
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: 4. Static Analysis
+        working-directory: ./frontend
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './frontend/dist'
+
+      - name: 5. Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 6. Wait for Deployment
+        run: sleep 15
+
+      - name: 7. Deployment Verification
+        run: |
+          echo "Verifying deployment at ${{ steps.deployment.outputs.page_url }}"
+          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" ${{ steps.deployment.outputs.page_url }})
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Deployment Verification Failed! HTTP Status: $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Deployment successful."
+
+      - name: 8. Run Selenium E2E Tests
+        id: e2e_tests
+        working-directory: ./automation
+        env:
+          BASE_URL: ${{ steps.deployment.outputs.page_url }}
+          HEADLESS: "true"
+        run: npm test
+
+      - name: 9. Generate Reports (HTML, JSON)
+        if: always()
+        working-directory: ./automation
+        run: npm run report:generate
+        continue-on-error: true
+
+      - name: 11. Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-test-results
+          path: |
+            automation/reports/
+            automation/screenshots/
+            automation/logs/
+          retention-days: 30
+
+      - name: 12. Publish Summary
+        if: always()
+        working-directory: ./automation
+        run: node utils/generate_summary.js >> $GITHUB_STEP_SUMMARY
+        continue-on-error: true

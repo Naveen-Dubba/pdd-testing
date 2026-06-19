@@ -1,0 +1,20 @@
+{
+  "name": "vastra-automation",
+  "version": "2.0.0",
+  "description": "Enterprise Selenium E2E test suite for Vastra Phase 7",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/**/*.test.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=reports/HTML,reportFilename=execution-report --exit",
+    "report:generate": "node utils/reporter.js && node utils/generate_summary.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "selenium-webdriver": "^4.18.0",
+    "winston": "^3.12.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.3.0",
+    "mochawesome": "^7.1.3"
+  }
+}
