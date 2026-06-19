@@ -98,26 +98,11 @@ jobs:
         cd appium-tests
         python -m pytest tests/ -v || true
 
-  generate-report:
-    name: Generate Vastra Test Report
-    needs: appium-tests
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install Openpyxl
-      run: |
-        pip install openpyxl
-
     - name: Upload App Test Report
       uses: actions/upload-artifact@v4
       with:
         name: App-Test-Report
         path: appium-tests/reports/
         retention-days: 30
+
+
