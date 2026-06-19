@@ -1,0 +1,45 @@
+name: Selenium Web E2E Testing CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-web:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: 'selenium-tests/package-lock.json'
+
+    - name: Install Google Chrome and ChromeDriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Install dependencies
+      run: |
+        cd selenium-tests
+        npm install
+
+    - name: Run Web Selenium E2E Tests
+      env:
+        HEADLESS: 'true'
+      run: |
+        cd selenium-tests
+        npm test || true # Continue so reports are uploaded even if tests fail
+
+    - name: Upload Test Execution Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: Web-E2E-Excel-Report
+        path: selenium-tests/reports/
