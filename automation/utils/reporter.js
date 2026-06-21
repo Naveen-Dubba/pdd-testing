@@ -28,6 +28,7 @@ async function generateExcelReport() {
   const executedSheet = workbook.addWorksheet('Executed Test Cases');
   executedSheet.columns = [
     { header: 'Test ID', key: 'id', width: 40 },
+    { header: 'Screen Component', key: 'screenComponent', width: 25 },
     { header: 'Suite/Module', key: 'suite', width: 30 },
     { header: 'Test Name', key: 'title', width: 50 },
     { header: 'Status', key: 'status', width: 15 },
@@ -43,8 +44,19 @@ async function generateExcelReport() {
 
   function traverseSuites(suite) {
     suite.tests.forEach(test => {
+      let screenComponent = 'General';
+      const suiteName = suite.title || '';
+      if (suiteName.includes('Authentication') || test.title.includes('login')) screenComponent = 'Login Screen';
+      else if (suiteName.includes('Authorization') || suiteName.includes('CRUD')) screenComponent = 'Dashboard';
+      else if (suiteName.includes('Forms') || suiteName.includes('File Upload')) screenComponent = 'Profile Screen';
+      else if (suiteName.includes('Navigation')) screenComponent = 'Navigation Flow';
+      else if (suiteName.includes('UI Validation')) screenComponent = 'UI Components';
+      else if (suiteName.includes('Error Handling')) screenComponent = 'Error Pages';
+      else screenComponent = suiteName.replace('Module: ', '') || 'App Screen';
+
       const row = {
         id: test.uuid,
+        screenComponent: screenComponent,
         suite: suite.title,
         title: test.title,
         status: 'passed',
