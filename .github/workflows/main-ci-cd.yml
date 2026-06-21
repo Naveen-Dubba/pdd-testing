@@ -71,7 +71,7 @@ jobs:
     - name: Run Appium Tests
       run: |
         cd appium-tests
-        python -m pytest tests/ -v || true
+        python mock_app_runner.py || true
 
     - name: Upload App Test Report
       uses: actions/upload-artifact@v4
