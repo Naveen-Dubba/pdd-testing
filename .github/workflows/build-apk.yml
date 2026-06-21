@@ -45,3 +45,12 @@ jobs:
           name: flutter-build-log
           path: flutter_build.log
           retention-days: 14
+
+      - name: 8. Commit Log for Debugging
+        if: always()
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add flutter_build.log
+          git commit -m "Add flutter build log for debugging [skip ci]" || echo "No changes to commit"
+          git push
