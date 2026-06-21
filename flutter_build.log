@@ -20,44 +20,22 @@ Preparing "Install CMake 3.22.1 v.3.22.1".
 Installing CMake 3.22.1 in /usr/local/lib/android/sdk/cmake/3.22.1
 "Install CMake 3.22.1 v.3.22.1" complete.
 "Install CMake 3.22.1 v.3.22.1" finished.
-lib/services/chat_service.dart:3:8: Error: Error when reading 'lib/core/secrets.dart': No such file or directory
-import '../core/secrets.dart';
-       ^
-lib/services/weather_service.dart:4:8: Error: Error when reading 'lib/core/secrets.dart': No such file or directory
-import '../core/secrets.dart';
-       ^
-lib/services/match_service.dart:4:8: Error: Error when reading 'lib/core/secrets.dart': No such file or directory
-import '../core/secrets.dart';
-       ^
-lib/services/analysis_service.dart:4:8: Error: Error when reading 'lib/core/secrets.dart': No such file or directory
-import '../core/secrets.dart';
-       ^
-lib/services/weather_service.dart:22:33: Error: Undefined name 'Secrets'.
-  static const String _owmKey = Secrets.owmKey;
-                                ^^^^^^^
-lib/services/chat_service.dart:37:38: Error: The getter 'Secrets' isn't defined for the type 'ChatService'.
- - 'ChatService' is from 'package:vastranaveen/services/chat_service.dart' ('lib/services/chat_service.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'Secrets'.
-          'Authorization': 'Bearer ${Secrets.groqChatKey}',
-                                     ^^^^^^^
-lib/services/match_service.dart:66:40: Error: The getter 'Secrets' isn't defined for the type 'MatchService'.
- - 'MatchService' is from 'package:vastranaveen/services/match_service.dart' ('lib/services/match_service.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'Secrets'.
-            'Authorization': 'Bearer ${Secrets.groqChatKey}',
-                                       ^^^^^^^
-lib/services/analysis_service.dart:48:40: Error: The getter 'Secrets' isn't defined for the type 'AnalysisService'.
- - 'AnalysisService' is from 'package:vastranaveen/services/analysis_service.dart' ('lib/services/analysis_service.dart').
-Try correcting the name to the name of an existing getter, or defining a getter or field named 'Secrets'.
-            'Authorization': 'Bearer ${Secrets.groqAnalysisKey}',
-                                       ^^^^^^^
-Target kernel_snapshot_program failed: Exception
-
+Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 6336 bytes (99.6% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileFlutterBuildRelease'.
-> Process 'command '/opt/hostedtoolcache/flutter/stable-3.44.2-x64/flutter/bin/flutter'' finished with non-zero exit value 1
+Execution failed for task ':app:checkReleaseAarMetadata'.
+> A failure occurred while executing com.android.build.gradle.internal.tasks.CheckAarMetadataWorkAction
+   > An issue was found when checking AAR metadata:
+
+       1.  Dependency ':flutter_local_notifications' requires core library desugaring to be enabled
+           for :app.
+
+           See https://developer.android.com/studio/write/java8-support.html for more
+           details.
 
 * Try:
 > Run with --stacktrace option to get the stack trace.
@@ -65,6 +43,6 @@ Execution failed for task ':app:compileFlutterBuildRelease'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 2m 42s
-Running Gradle task 'assembleRelease'...                          162.9s
+BUILD FAILED in 3m 31s
+Running Gradle task 'assembleRelease'...                          211.7s
 Gradle task assembleRelease failed with exit code 1
