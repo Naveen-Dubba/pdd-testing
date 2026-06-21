@@ -30,11 +30,18 @@ jobs:
         run: flutter pub get
 
       - name: 5. Build APK
-        run: flutter build apk --release
-        
+        run: flutter build apk --release > flutter_build.log 2>&1
+        continue-on-error: true
       - name: 6. Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: vastranaveen-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+          
+      - name: 7. Upload Build Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-build-log
+          path: flutter_build.log
           retention-days: 14
