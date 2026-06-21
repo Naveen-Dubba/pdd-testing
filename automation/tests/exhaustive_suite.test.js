@@ -4,20 +4,20 @@ const AppPage = require('../pages/AppPage');
 const config = require('../config/env.config');
 
 const testCategories = [
-  { name: 'Authentication', count: 25, path: '/#/login' },
-  { name: 'Authorization', count: 25, path: '/#/dashboard' },
-  { name: 'Navigation', count: 20, path: '/' },
-  { name: 'UI Validation', count: 25, path: '/' },
-  { name: 'Forms', count: 25, path: '/#/profile' },
-  { name: 'CRUD Operations', count: 25, path: '/#/dashboard' },
-  { name: 'Input Validation', count: 25, path: '/#/login' },
-  { name: 'Error Handling', count: 15, path: '/#/invalid-route-404' },
-  { name: 'Session Management', count: 15, path: '/#/dashboard' },
-  { name: 'File Upload', count: 15, path: '/#/profile' },
-  { name: 'Accessibility', count: 15, path: '/' },
-  { name: 'Responsive Design', count: 15, path: '/' },
-  { name: 'Performance Smoke Tests', count: 15, path: '/' },
-  { name: 'Regression', count: 40, path: '/' }
+  { name: 'Login Screen', count: 25, path: '/#/login' },
+  { name: 'Register Screen', count: 25, path: '/#/register' },
+  { name: 'Dashboard Screen', count: 20, path: '/#/dashboard' },
+  { name: 'Profile Screen', count: 25, path: '/#/profile' },
+  { name: 'Settings Screen', count: 25, path: '/#/settings' },
+  { name: 'Analyze Screen', count: 25, path: '/#/analyze' },
+  { name: 'Chatbot Screen', count: 25, path: '/#/chatbot' },
+  { name: 'History Screen', count: 15, path: '/#/history' },
+  { name: 'Capture Screen', count: 15, path: '/#/capture' },
+  { name: 'Match Checker Screen', count: 15, path: '/#/match-checker' },
+  { name: 'Shop Screen', count: 15, path: '/#/shop' },
+  { name: 'Recommended Colors Screen', count: 15, path: '/#/recommended-colors' },
+  { name: 'Analysis Result Screen', count: 15, path: '/#/analysis-result' },
+  { name: 'Splash Screen', count: 40, path: '/' }
 ];
 
 describe('Phase 7 Comprehensive E2E Suite', function () {

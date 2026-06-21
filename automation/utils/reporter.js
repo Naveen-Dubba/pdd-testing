@@ -44,15 +44,8 @@ async function generateExcelReport() {
 
   function traverseSuites(suite) {
     suite.tests.forEach(test => {
-      let screenComponent = 'General';
-      const suiteName = suite.title || '';
-      if (suiteName.includes('Authentication') || test.title.includes('login')) screenComponent = 'Login Screen';
-      else if (suiteName.includes('Authorization') || suiteName.includes('CRUD')) screenComponent = 'Dashboard';
-      else if (suiteName.includes('Forms') || suiteName.includes('File Upload')) screenComponent = 'Profile Screen';
-      else if (suiteName.includes('Navigation')) screenComponent = 'Navigation Flow';
-      else if (suiteName.includes('UI Validation')) screenComponent = 'UI Components';
-      else if (suiteName.includes('Error Handling')) screenComponent = 'Error Pages';
-      else screenComponent = suiteName.replace('Module: ', '') || 'App Screen';
+      let screenComponent = suite.title.replace('Module: ', '');
+      if (!screenComponent) screenComponent = 'App Screen';
 
       const row = {
         id: test.uuid,
