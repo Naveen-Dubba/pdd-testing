@@ -35,12 +35,15 @@ jobs:
       run: |
         cd selenium-tests
         npm test || true
+        node generate_300_web_cases.js || true
 
     - name: Upload Web Test Report
       uses: actions/upload-artifact@v4
       with:
         name: Web-Test-Report
-        path: selenium-tests/reports/
+        path: |
+          selenium-tests/reports/
+          selenium-tests/Web_300_Test_Cases.xlsx
         retention-days: 30
 
   deploy-gh-pages:
