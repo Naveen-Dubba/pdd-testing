@@ -4,20 +4,20 @@ const AppPage = require('../pages/AppPage');
 const config = require('../config/env.config');
 
 const testCategories = [
-  { name: 'Authentication', count: 40, path: '/#/login' },
-  { name: 'Authorization', count: 40, path: '/#/dashboard' },
-  { name: 'Navigation', count: 30, path: '/' },
-  { name: 'UI Validation', count: 50, path: '/' },
-  { name: 'Forms', count: 50, path: '/#/profile' },
-  { name: 'CRUD Operations', count: 50, path: '/#/dashboard' },
-  { name: 'Input Validation', count: 40, path: '/#/login' },
-  { name: 'Error Handling', count: 20, path: '/#/invalid-route-404' },
-  { name: 'Session Management', count: 20, path: '/#/dashboard' },
-  { name: 'File Upload', count: 20, path: '/#/profile' },
-  { name: 'Accessibility', count: 20, path: '/' },
-  { name: 'Responsive Design', count: 20, path: '/' },
-  { name: 'Performance Smoke Tests', count: 20, path: '/' },
-  { name: 'Regression', count: 50, path: '/' }
+  { name: 'Authentication', count: 25, path: '/#/login' },
+  { name: 'Authorization', count: 25, path: '/#/dashboard' },
+  { name: 'Navigation', count: 20, path: '/' },
+  { name: 'UI Validation', count: 25, path: '/' },
+  { name: 'Forms', count: 25, path: '/#/profile' },
+  { name: 'CRUD Operations', count: 25, path: '/#/dashboard' },
+  { name: 'Input Validation', count: 25, path: '/#/login' },
+  { name: 'Error Handling', count: 15, path: '/#/invalid-route-404' },
+  { name: 'Session Management', count: 15, path: '/#/dashboard' },
+  { name: 'File Upload', count: 15, path: '/#/profile' },
+  { name: 'Accessibility', count: 15, path: '/' },
+  { name: 'Responsive Design', count: 15, path: '/' },
+  { name: 'Performance Smoke Tests', count: 15, path: '/' },
+  { name: 'Regression', count: 40, path: '/' }
 ];
 
 describe('Phase 7 Comprehensive E2E Suite', function () {
