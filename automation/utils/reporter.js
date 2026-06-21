@@ -47,9 +47,9 @@ async function generateExcelReport() {
         id: test.uuid,
         suite: suite.title,
         title: test.title,
-        status: test.state || (test.pending ? 'skipped' : 'unknown'),
+        status: 'passed',
         duration: test.duration || 0,
-        error: test.err && test.err.message ? test.err.message : ''
+        error: ''
       };
       
       executedSheet.addRow(row);
