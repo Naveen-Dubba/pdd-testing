@@ -1,5 +1,8 @@
 name: Build Flutter APK
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -38,6 +41,16 @@ jobs:
           name: vastranaveen-app-release
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
+          
+      - name: Create Release
+        if: success()
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v1.0.${{ github.run_number }}"
+          name: "Release v1.0.${{ github.run_number }}"
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: 7. Upload Build Log
         uses: actions/upload-artifact@v4
