@@ -8,6 +8,12 @@ const routes = ['/', '/login', '/register', '/dashboard', '/chat', '/profile', '
 async function buildDriver() {
     const options = new chrome.Options();
     options.addArguments('--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu');
+    if (process.env.HEADLESS === 'true') {
+        options.addArguments('--headless');
+        options.addArguments('--disable-web-security');
+        options.addArguments('--ignore-certificate-errors');
+        options.addArguments('--user-data-dir=/tmp/chrome-user-data-nav');
+    }
     return new Builder().forBrowser('chrome').setChromeOptions(options).build();
 }
 

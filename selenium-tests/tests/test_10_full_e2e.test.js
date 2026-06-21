@@ -3,12 +3,29 @@ const { initDriver, takeScreenshot, globalResults, ensureLoggedIn } = require('.
 const { By, until } = require('selenium-webdriver');
 const config = require('../config');
 
-describe('Web Complete Application E2E Journeys', function () {
+// Import Page Objects
+const LoginPage = require('../pages/LoginPage');
+const DashboardPage = require('../pages/DashboardPage');
+const ChatPage = require('../pages/ChatPage');
+const ProfilePage = require('../pages/ProfilePage');
+const SettingsPage = require('../pages/SettingsPage');
+
+describe('Web Complete Application E2E Journeys (POM)', function () {
   let driver;
+  let loginPage, dashboardPage, chatPage, profilePage, settingsPage;
   const screen = 'Full E2E Flow';
 
   before(async function () {
     driver = await initDriver();
+    
+    // Initialize Page Objects
+    loginPage = new LoginPage(driver);
+    dashboardPage = new DashboardPage(driver);
+    chatPage = new ChatPage(driver);
+    profilePage = new ProfilePage(driver);
+    settingsPage = new SettingsPage(driver);
+
+    // Run shared login setup
     await ensureLoggedIn(driver);
   });
 
@@ -36,50 +53,41 @@ describe('Web Complete Application E2E Journeys', function () {
 
   it('TC-E2E-01: Full user journey - Step 1: Login validation', async function () {
     await recordResult('TC-E2E-01', 'Functional', 'Verify E2E path starts with standard login validation', async () => {
-      // Login was handled in before() via ensureLoggedIn — verify we are already on dashboard
-      const url = await driver.getCurrentUrl();
+      const url = await dashboardPage.getCurrentUrl();
       expect(url).to.contain('dashboard');
-      const text = await driver.findElement(By.tagName('body')).getText();
+      const text = await dashboardPage.getGreetingText();
       expect(text).to.contain('Dashboard');
     });
   });
 
   it('TC-E2E-02: Full user journey - Step 2: Dashboard greeting rendering check', async function () {
     await recordResult('TC-E2E-02', 'UI/UX', 'Verify user details display greeting on main panel banner', async () => {
-      const text = await driver.findElement(By.tagName('body')).getText();
+      const text = await dashboardPage.getGreetingText();
       expect(text).to.contain('Hello');
     });
   });
 
   it('TC-E2E-03: Full user journey - Step 3: Transition route to Style Chatbot', async function () {
     await recordResult('TC-E2E-03', 'Functional', 'Navigate to chatbot tab within the active session', async () => {
-      const chatLink = await driver.findElement(By.xpath("//nav//a[contains(@href, 'chatbot') or contains(text(), 'Chat')]"));
-      await chatLink.click();
-      await driver.wait(until.urlContains('chatbot'), 5000);
-      const text = await driver.findElement(By.tagName('body')).getText();
+      await dashboardPage.navigateToChat();
+      const text = await chatPage.getBodyText();
       expect(text).to.contain('Style Chat');
     });
   });
 
   it('TC-E2E-04: Full user journey - Step 4: Submission of styling question', async function () {
     await recordResult('TC-E2E-04', 'Functional', 'Type and submit clothing coordinate query in active session', async () => {
-      const input = await driver.findElement(By.xpath("//input[@placeholder='Ask Vastra...' or @type='text']"));
-      await input.sendKeys('What matches dark blue jeans?');
-      const btn = await driver.findElement(By.xpath("//button[@type='submit' or contains(@class, 'send')]"));
-      await btn.click();
-      const timeSleep = (ms) => new Promise(res => setTimeout(res, ms));
-      await timeSleep(2000);
-      const body = await driver.findElement(By.tagName('body')).getText();
+      await chatPage.sendMessage('What matches dark blue jeans?');
+      await chatPage.sleep(2000);
+      const body = await chatPage.getBodyText();
       expect(body).to.contain('blue jeans');
     });
   });
 
   it('TC-E2E-05: Full user journey - Step 5: Transition route to Face Shape Analysis page', async function () {
     await recordResult('TC-E2E-05', 'Functional', 'Navigate to Face Shape Wizard within the active session', async () => {
-      const analyzeLink = await driver.findElement(By.xpath("//nav//a[contains(@href, 'analyze') or contains(text(), 'Analyze')]"));
-      await analyzeLink.click();
-      await driver.wait(until.urlContains('analyze'), 5000);
-      const text = await driver.findElement(By.tagName('body')).getText();
+      await dashboardPage.navigateToAnalyze();
+      const text = await dashboardPage.getBodyText();
       expect(text).to.contain('Face Shape');
     });
   });
@@ -93,37 +101,31 @@ describe('Web Complete Application E2E Journeys', function () {
 
   it('TC-E2E-07: Full user journey - Step 7: Transition route to Profile metrics page', async function () {
     await recordResult('TC-E2E-07', 'Functional', 'Navigate to Profile dashboard in active session', async () => {
-      const profileLink = await driver.findElement(By.xpath("//nav//a[contains(@href, 'profile') or contains(text(), 'Profile')]"));
-      await profileLink.click();
-      await driver.wait(until.urlContains('profile'), 5000);
-      const text = await driver.findElement(By.tagName('body')).getText();
+      await dashboardPage.navigateToProfile();
+      const text = await profilePage.getBodyText();
       expect(text).to.contain('Profile');
     });
   });
 
   it('TC-E2E-08: Full user journey - Step 8: Profile verification matching details', async function () {
     await recordResult('TC-E2E-08', 'Functional', 'Verify that profile shows test email display in active session', async () => {
-      const text = await driver.findElement(By.tagName('body')).getText();
+      const text = await profilePage.getBodyText();
       expect(text).to.contain(config.TEST_EMAIL);
     });
   });
 
   it('TC-E2E-09: Full user journey - Step 9: Transition route to settings options', async function () {
     await recordResult('TC-E2E-09', 'Functional', 'Navigate to Settings panel in active session', async () => {
-      const settingsLink = await driver.findElement(By.xpath("//a[contains(@href, 'settings') or contains(text(), 'Settings')]"));
-      await settingsLink.click();
-      await driver.wait(until.urlContains('settings'), 5000);
-      const text = await driver.findElement(By.tagName('body')).getText();
+      await dashboardPage.navigateToSettings();
+      const text = await settingsPage.getBodyText();
       expect(text).to.contain('Settings');
     });
   });
 
   it('TC-E2E-10: Full user journey - Step 10: Logout completion redirect', async function () {
     await recordResult('TC-E2E-10', 'Functional', 'Verify clean logout and redirection to Auth login screen', async () => {
-      const logout = await driver.findElement(By.xpath("//*[contains(text(), 'Log out') or contains(text(), 'Logout')]"));
-      await logout.click();
-      await driver.wait(until.urlContains('login'), 8000);
-      const text = await driver.findElement(By.tagName('body')).getText();
+      await settingsPage.logout();
+      const text = await loginPage.getBodyText();
       expect(text).to.contain('Welcome Back');
       await takeScreenshot(driver, 'e2e_complete_logout');
     });

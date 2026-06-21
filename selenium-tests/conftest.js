@@ -12,9 +12,12 @@ async function initDriver() {
   const options = new chrome.Options();
   config.CHROME_OPTIONS.forEach(opt => options.addArguments(opt));
   
-  // Set headless mode for CI environments if specified
+  // Set headless mode and disable security constraints for CI environments if specified
   if (process.env.HEADLESS === 'true') {
     options.addArguments('--headless');
+    options.addArguments('--disable-web-security');
+    options.addArguments('--ignore-certificate-errors');
+    options.addArguments('--user-data-dir=/tmp/chrome-user-data');
   }
 
   const driver = await new Builder()
@@ -27,17 +30,17 @@ async function initDriver() {
 }
 
 async function takeScreenshot(driver, name) {
-  const screenshotsDir = path.join(__dirname, 'screenshots');
+  const screenshotsDir = path.join(__dirname, '..', 'Test Results', 'Screenshots');
   if (!fs.existsSync(screenshotsDir)) {
     fs.mkdirSync(screenshotsDir, { recursive: true });
   }
-  const filename = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.png`;
+  const filename = `${name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.png`;
   const filePath = path.join(screenshotsDir, filename);
   
   try {
     const image = await driver.takeScreenshot();
     fs.writeFileSync(filePath, image, 'base64');
-    return path.relative(__dirname, filePath);
+    return filename; // Return filename only so reporter can construct relative path relative to HTML report
   } catch (e) {
     return '';
   }

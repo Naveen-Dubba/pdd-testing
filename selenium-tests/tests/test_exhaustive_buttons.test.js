@@ -1,4 +1,5 @@
 const { Builder, By, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const config = require('../config');
 const fs = require('fs');
 const path = require('path');
@@ -11,13 +12,25 @@ const viewports = [
     { width: 375, height: 667 },   // Mobile
 ];
 
+async function buildDriver() {
+    const options = new chrome.Options();
+    options.addArguments('--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu');
+    if (process.env.HEADLESS === 'true') {
+        options.addArguments('--headless');
+        options.addArguments('--disable-web-security');
+        options.addArguments('--ignore-certificate-errors');
+        options.addArguments('--user-data-dir=/tmp/chrome-user-data-buttons');
+    }
+    return new Builder().forBrowser('chrome').setChromeOptions(options).build();
+}
+
 // 10 routes * 10 button types * 2 viewports = 200 tests generated here
 describe('Exhaustive Button Visibility & Clickability Tests', function () {
     this.timeout(30000);
     let driver;
 
     before(async function () {
-        driver = await new Builder().forBrowser('chrome').build();
+        driver = await buildDriver();
     });
 
     after(async function () {
