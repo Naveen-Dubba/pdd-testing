@@ -32,6 +32,11 @@ jobs:
       - name: 4. Install Dependencies
         run: flutter pub get
 
+      - name: Inject Secrets
+        run: |
+          mkdir -p lib/core
+          echo "Y2xhc3MgU2VjcmV0cyB7CiAgLy8gR3JvcSBBUEkga2V5cyDigJQgZ2V0IHlvdXJzIGF0IGh0dHBzOi8vY29uc29sZS5ncm9xLmNvbS9rZXlzCiAgc3RhdGljIGNvbnN0IFN0cmluZyBncm9xQW5hbHlzaXNLZXkgPSAnZ3NrX292enlrbFFPVldrS1VzQ2t6SnU4V0dkeWIzRllwZHZVOHVRMk1YTEVkWGY0MjBFY3dnS2gnOwogIHN0YXRpYyBjb25zdCBTdHJpbmcgZ3JvcUNoYXRLZXkgICAgID0gJ2dza19vdnp5a2xRT1ZXa0tVc0Nrekp1OFdHZHliM0ZZcGR2VTh1UTJNWExFZFhmNDIwRWN3Z0toJzsKCiAgLy8gT3BlbldlYXRoZXJNYXAg4oCUIGdldCB5b3VycyBhdCBodHRwczovL29wZW53ZWF0aGVybWFwLm9yZy9hcGkKICBzdGF0aWMgY29uc3QgU3RyaW5nIG93bUtleSA9ICdZT1VSX09XTV9LRVlfSEVSRSc7Cn0K" | base64 -d > lib/core/secrets.dart
+
       - name: 5. Build APK
         run: flutter build apk --release > flutter_build.log 2>&1
         continue-on-error: true
@@ -44,11 +49,12 @@ jobs:
           
       - name: Create Release
         if: success()
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: "v1.0.${{ github.run_number }}"
           name: "Release v1.0.${{ github.run_number }}"
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/**/*.apk
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
