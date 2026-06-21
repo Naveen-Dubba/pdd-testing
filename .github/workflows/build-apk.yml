@@ -65,6 +65,15 @@ jobs:
           path: flutter_build.log
           retention-days: 14
 
+      - name: 7.5. Upload Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: E2E-Test-Reports
+          path: |
+            App_Test_Report.xlsx
+            Web_Test_Report.xlsx
+          retention-days: 14
+
       - name: 8. Commit Log for Debugging
         if: always()
         run: |
