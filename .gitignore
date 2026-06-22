@@ -59,3 +59,7 @@ reports/
 screenshots/
 **/screenshots/
 
+# Python scripts containing secrets
+download_apk.py
+fetch_logs.py
+wait_and_download.py

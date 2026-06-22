@@ -151,6 +151,6 @@ function parseJsonFromMarkdown(raw) {
     return JSON.parse(s);
   } catch (error) {
     console.error('Failed to parse JSON content from Groq:', s);
-    throw new Error('Invalid JSON format returned from analysis service.');
+    throw new Error('Invalid JSON format returned from analysis service.', { cause: error });
   }
 }

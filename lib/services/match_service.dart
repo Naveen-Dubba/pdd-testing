@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/secrets.dart';
 
 class DressMatch {
@@ -59,11 +60,14 @@ Return ONLY this JSON object, nothing else:
 }
 ''';
 
+    final prefs = await SharedPreferences.getInstance();
+    final apiKey = prefs.getString('groq_api_key') ?? Secrets.groqChatKey;
+
     final res = await http
         .post(
           Uri.parse(_url),
           headers: {
-            'Authorization': 'Bearer ${Secrets.groqChatKey}',
+            'Authorization': 'Bearer $apiKey',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({

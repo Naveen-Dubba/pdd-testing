@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
-import { Sparkles, MessageSquare, History, Activity, Calendar, Shirt, ChevronRight, RefreshCw, AlertCircle } from 'lucide-react';
+import { Sparkles, MessageSquare, Activity, Calendar, Shirt, ChevronRight, RefreshCw, AlertCircle, Loader } from 'lucide-react';
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ total_analyses: 0, latest: null });
@@ -26,7 +26,9 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { groqService } from '../services/groq';
-import { Send, Sparkles, User, SendHorizonal, Loader, AlertCircle } from 'lucide-react';
+import { Send, Sparkles, User, Loader } from 'lucide-react';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([

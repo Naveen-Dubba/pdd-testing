@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Settings as SettingsIcon, Key, Info, HelpCircle, Save, CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Settings as SettingsIcon, Key, Info, Save, CheckCircle } from 'lucide-react';
 
 export default function Settings() {
   const [apiKey, setApiKey] = useState(localStorage.getItem('groq_api_key') || '');

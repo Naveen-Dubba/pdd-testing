@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/app_theme.dart';
 import '../services/auth_service.dart';
 import '../services/history_store.dart';
@@ -27,6 +28,8 @@ class SettingsScreen extends StatelessWidget {
                 () => Navigator.pushNamed(context, '/history')),
             _tile(Icons.delete_outline, 'Clear History', 'Remove all saved scans',
                 () => _clearHistory(context)),
+            _tile(Icons.key, 'API Key Settings', 'Configure your custom Groq API key',
+                () => _editApiKey(context)),
             _tile(Icons.info_outline, 'About', 'Vasthara AI v1.0',
                 () => _about(context)),
             const SizedBox(height: 16),
@@ -62,6 +65,60 @@ class SettingsScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('History cleared.')));
+      }
+    }
+  }
+
+  Future<void> _editApiKey(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentKey = prefs.getString('groq_api_key') ?? '';
+    final controller = TextEditingController(text: currentKey);
+
+    if (!context.mounted) return;
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: kDeepBlack,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Groq API Key', style: kDisplay(18, color: Colors.white)),
+        content: TextField(
+          controller: controller,
+          style: kBody(14, color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'gsk_...',
+            hintStyle: kBody(14, color: kTextSecondary),
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.05),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: kBody(14, color: kTextSecondary)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text),
+            child: Text('Save', style: kBody(14, color: kElectricBlue, w: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      if (result.trim().isEmpty) {
+        await prefs.remove('groq_api_key');
+      } else {
+        await prefs.setString('groq_api_key', result.trim());
+      }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('API Key updated successfully.')),
+        );
       }
     }
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
 import { History as HistoryIcon, Trash2, Calendar, Sparkles, Loader, AlertCircle, RefreshCw, Eye } from 'lucide-react';
 
@@ -52,7 +52,9 @@ export default function History() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

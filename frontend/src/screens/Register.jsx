@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiService } from '../services/api';
-import { Lock, Mail, User, Shield, Calendar, AlertCircle, Loader, Shirt } from 'lucide-react';
+import { Lock, Mail, User, Calendar, AlertCircle, Loader, Shirt } from 'lucide-react';
 
 export default function Register() {
   const navigate = useNavigate();

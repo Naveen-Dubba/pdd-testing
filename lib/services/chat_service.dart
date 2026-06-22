@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/secrets.dart';
 import '../models/chat_message.dart';
 
@@ -31,10 +32,13 @@ points. When suggesting items, mention colours and occasions clearly.
     ];
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final apiKey = prefs.getString('groq_api_key') ?? Secrets.groqChatKey;
+
       final response = await http.post(
         Uri.parse(_url),
         headers: {
-          'Authorization': 'Bearer ${Secrets.groqChatKey}',
+          'Authorization': 'Bearer $apiKey',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({

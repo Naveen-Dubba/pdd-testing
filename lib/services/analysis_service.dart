@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/secrets.dart';
 import '../models/analysis_result.dart';
 
@@ -41,11 +42,14 @@ Analyze the person in this photo and return ONLY this JSON object:
 Respond with the JSON object only.
 ''';
 
+    final prefs = await SharedPreferences.getInstance();
+    final apiKey = prefs.getString('groq_api_key') ?? Secrets.groqAnalysisKey;
+
     final response = await http
         .post(
           Uri.parse(_url),
           headers: {
-            'Authorization': 'Bearer ${Secrets.groqAnalysisKey}',
+            'Authorization': 'Bearer $apiKey',
             'Content-Type': 'application/json',
           },
           body: jsonEncode({

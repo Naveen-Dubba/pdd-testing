@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/api';
 import { groqService } from '../services/groq';
-import { Sparkles, Upload, Loader, Image, RefreshCw, AlertCircle, HelpCircle, Check, BookOpen } from 'lucide-react';
+import { Sparkles, Upload, Loader, RefreshCw, AlertCircle, HelpCircle, Check, BookOpen } from 'lucide-react';
 
 export default function Analyze() {
   const navigate = useNavigate();
@@ -12,7 +12,6 @@ export default function Analyze() {
   // AI upload state
   const [imageSrc, setImageSrc] = useState(null);
   const [base64Image, setBase64Image] = useState(null);
-  const [fileName, setFileName] = useState('');
   
   // Analysis Form state (Manual or AI output)
   const [gender, setGender] = useState('Male');
@@ -38,7 +37,7 @@ export default function Analyze() {
       return;
     }
 
-    setFileName(file.name);
+
     setError('');
 
     const reader = new FileReader();
@@ -81,7 +80,7 @@ export default function Analyze() {
       setBestColor(color);
 
       // Save analysis to Flask database
-      const saved = await apiService.saveAnalysis({
+      await apiService.saveAnalysis({
         user_id: user.id,
         gender: result.gender || 'Male',
         face_shape: result.face_shape || 'Oval',
@@ -130,7 +129,7 @@ export default function Analyze() {
   const resetState = () => {
     setImageSrc(null);
     setBase64Image(null);
-    setFileName('');
+
     setError('');
     setStep(1);
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { apiService } from '../services/api';
 import { User, Mail, Calendar, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 
@@ -26,7 +26,7 @@ export default function Profile() {
     setSuccess('');
 
     try {
-      const response = await apiService.updateProfile(name, email, gender, age);
+      await apiService.updateProfile(name, email, gender, age);
       // Update local storage
       const updatedUser = { ...user, name, gender, age: age ? parseInt(age) : null };
       localStorage.setItem('user', JSON.stringify(updatedUser));
