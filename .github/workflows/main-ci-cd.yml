@@ -55,6 +55,9 @@ jobs:
     name: Deploy to GitHub Pages
     needs: build-flutter-web
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://Naveen-Dubba.github.io/pdd-testing/
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
