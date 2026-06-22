@@ -1,0 +1,174 @@
+name: Complete CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # -----------------------------------------------------
+  # 1. Security Review Job
+  # -----------------------------------------------------
+  security-review:
+    name: Security Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks (Secret Detection)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Run Semgrep (SAST)
+        container:
+          image: returntocorp/semgrep
+        run: semgrep scan --config auto
+        continue-on-error: true
+
+      - name: Run Trivy (Dependency Vulnerabilities)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          vuln-type: 'os,library'
+        continue-on-error: true
+
+  # -----------------------------------------------------
+  # 2. Load Testing Job
+  # -----------------------------------------------------
+  load-testing:
+    name: Load Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run k6 Load Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: load-tests/k6-load-test.js
+        continue-on-error: true
+
+      - name: Publish Load Test Summary
+        if: always()
+        run: |
+          if [ -f summary.md ]; then
+            cat summary.md >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # -----------------------------------------------------
+  # 3. Web Automation Tests (Selenium)
+  # -----------------------------------------------------
+  web-tests:
+    name: Web Automation Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Web Tests
+        working-directory: ./selenium-tests
+        run: |
+          npm install
+          npm test || true
+          
+      - name: Upload Web Test Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-test-reports
+          path: |
+            selenium-tests/reports/
+            selenium-tests/screenshots/
+            selenium-tests/*.xlsx
+
+  # -----------------------------------------------------
+  # 4. App Automation Tests (Appium)
+  # -----------------------------------------------------
+  app-tests:
+    name: App Automation Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (for Appium)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install and Run Appium Server
+        run: |
+          npm install -g appium
+          appium &
+          sleep 5 # Wait for appium to start
+
+      - name: Run App Tests
+        working-directory: ./appium-tests
+        run: |
+          pip install -r requirements.txt
+          python -m pytest tests/ -v --html=reports/report.html --self-contained-html || true
+
+      - name: Upload App Test Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: app-test-reports
+          path: |
+            appium-tests/reports/
+            appium-tests/screenshots/
+            appium-tests/*.xlsx
+            *.xlsx
+
+  # -----------------------------------------------------
+  # 5. Build and Release APK (Flutter)
+  # Waits for all testing/security checks to complete
+  # -----------------------------------------------------
+  build-apk:
+    name: Build & Release APK
+    needs: [security-review, load-testing, web-tests, app-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Build APK (Release)
+        run: flutter build apk --release
+
+      - name: Upload APK Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
