@@ -14,38 +14,46 @@ permissions:
 
 jobs:
   # -----------------------------------------------------
-  # 1. Build and Deploy Web App
+  # 1. Build Flutter Web App
   # -----------------------------------------------------
-  build-web-app:
-    name: Build Vite Web App
+  build-flutter-web:
+    name: Build Flutter Web
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: '20'
+          distribution: 'zulu'
+          java-version: '17'
 
-      - name: Install Dependencies
-        working-directory: ./frontend
-        run: npm install
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-      - name: Build Web App
-        working-directory: ./frontend
-        run: npm run build
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web (Release)
+        # Sets the base URL so that it works correctly on GitHub Pages
+        run: flutter build web --release --base-href "/pdd-testing/"
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: frontend-dist
-          path: frontend/dist/
+          name: flutter-web-dist
+          path: build/web/
           retention-days: 1
 
+  # -----------------------------------------------------
+  # 2. Deploy to GitHub Pages
+  # -----------------------------------------------------
   deploy-gh-pages:
     name: Deploy to GitHub Pages
-    needs: build-web-app
+    needs: build-flutter-web
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -54,7 +62,7 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: frontend-dist
+          name: flutter-web-dist
           path: dist
 
       - name: Deploy to GitHub Pages
@@ -63,6 +71,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
 
+  # -----------------------------------------------------
+  # 3. Verify Live Deployment
+  # -----------------------------------------------------
   verify-deployment:
     name: Verify Live Deployment
     needs: deploy-gh-pages
@@ -85,7 +96,7 @@ jobs:
           fi
 
   # -----------------------------------------------------
-  # 2. Web Test Cases (Selenium)
+  # 4. Web Test Cases (Selenium)
   # -----------------------------------------------------
   selenium-e2e-tests:
     name: Selenium E2E Web Tests
@@ -130,7 +141,7 @@ jobs:
           retention-days: 14
 
   # -----------------------------------------------------
-  # 3. App Test Cases (Appium)
+  # 5. App Test Cases (Appium)
   # -----------------------------------------------------
   appium-tests:
     name: Appium Mobile Tests
@@ -173,7 +184,7 @@ jobs:
           retention-days: 14
 
   # -----------------------------------------------------
-  # 4. APK Release (Flutter Build)
+  # 6. APK Release (Flutter Build)
   # -----------------------------------------------------
   build-apk:
     name: Build Flutter APK
@@ -207,7 +218,7 @@ jobs:
           retention-days: 14
 
   # -----------------------------------------------------
-  # 5. Load Testing (k6)
+  # 7. Load Testing (k6)
   # -----------------------------------------------------
   load-testing:
     name: k6 Load Test
