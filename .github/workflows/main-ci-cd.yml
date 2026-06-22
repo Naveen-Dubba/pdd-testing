@@ -146,3 +146,23 @@ jobs:
           name: app-release-apk
           path: build/**/*.apk
           retention-days: 14
+
+  load-testing:
+    name: k6 Load Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run k6 Load Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: load-tests/k6-load-test.js
+        continue-on-error: true
+
+      - name: Publish Load Test Summary
+        if: always()
+        run: |
+          if [ -f summary.md ]; then
+            cat summary.md >> $GITHUB_STEP_SUMMARY
+          fi
