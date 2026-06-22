@@ -127,15 +127,9 @@ jobs:
         working-directory: ./selenium-tests
         run: npm test || true
 
-      - name: Generate Markdown Summary
+      - name: Generate Local Summary
         working-directory: ./selenium-tests
         run: node generate_summary.js || true
-
-      - name: Publish Summary to GitHub Step
-        run: |
-          if [ -f selenium-tests/summary.md ]; then
-            cat selenium-tests/summary.md >> $GITHUB_STEP_SUMMARY
-          fi
 
       - name: Upload Web Test Reports
         uses: actions/upload-artifact@v4
@@ -252,3 +246,25 @@ jobs:
           if [ -f summary.md ]; then
             cat summary.md >> $GITHUB_STEP_SUMMARY
           fi
+
+  # -----------------------------------------------------
+  # 8. Comprehensive Verification Dashboard
+  # -----------------------------------------------------
+  verify-all:
+    name: Verify All — 330 Web + 350 Appium + Security summary
+    needs: [selenium-e2e-tests, appium-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate Comprehensive Dashboard
+        run: |
+          node .github/scripts/generate_dashboard.js
+          cat dashboard.md >> $GITHUB_STEP_SUMMARY
