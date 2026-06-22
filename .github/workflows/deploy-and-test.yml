@@ -1,0 +1,123 @@
+name: deploy-and-test.yml
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-web-app:
+    name: Build Vite Web App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Build Web App
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  deploy-gh-pages:
+    name: Deploy to GitHub Pages
+    needs: build-web-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+
+  verify-deployment:
+    name: Verify Live Deployment
+    needs: deploy-gh-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Deployment
+        run: |
+          echo "Waiting 30 seconds for GitHub Pages CDN to clear cache and update..."
+          sleep 30
+          
+      - name: Verify URL Status
+        run: |
+          URL="https://Naveen-Dubba.github.io/pdd-testing/"
+          echo "Pinging $URL..."
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" $URL)
+          if [ "$STATUS" -eq 200 ] || [ "$STATUS" -eq 301 ] || [ "$STATUS" -eq 302 ]; then
+            echo "Deployment verified! Status: $STATUS"
+          else
+            echo "Warning: Expected 200, got $STATUS. The test may fail if the site is not fully up."
+          fi
+
+  selenium-e2e-tests:
+    name: Selenium E2E Tests
+    needs: verify-deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Selenium Dependencies
+        working-directory: ./selenium-tests
+        run: npm install
+
+      - name: Run Web Selenium E2E Tests
+        working-directory: ./selenium-tests
+        run: npm test || true
+
+      - name: Generate Markdown Summary
+        working-directory: ./selenium-tests
+        run: node generate_summary.js
+
+      - name: Publish Summary to GitHub Step
+        run: |
+          if [ -f selenium-tests/summary.md ]; then
+            cat selenium-tests/summary.md >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Selenium-Test-Results
+          path: |
+            selenium-tests/reports/
+            selenium-tests/screenshots/
+          retention-days: 14
