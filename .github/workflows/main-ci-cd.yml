@@ -251,8 +251,8 @@ jobs:
   # 8. Comprehensive Verification Dashboard
   # -----------------------------------------------------
   verify-all:
-    name: Verify All — 330 Web + 350 Appium + Security summary
-    needs: [selenium-e2e-tests, appium-tests]
+    name: Verify All — 300 Web + 300 Android + 300 Backend
+    needs: [selenium-e2e-tests, appium-tests, load-testing]
     runs-on: ubuntu-latest
     if: always()
     steps:
