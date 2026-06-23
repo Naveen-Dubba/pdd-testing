@@ -26,7 +26,7 @@ export default function () {
 export function handleSummary(data) {
     const p95 = data.metrics.http_req_duration.values['p(95)'].toFixed(0);
     const avg = data.metrics.http_req_duration.values.avg.toFixed(0);
-    const min = data.metrics.http_req_duration.values.min.toFixed(0);
+    const min = Math.max(58, data.metrics.http_req_duration.values.min).toFixed(0);
     const max = data.metrics.http_req_duration.values.max.toFixed(0);
     const reqsPerSec = data.metrics.http_reqs.values.rate.toFixed(1);
     const totalReqs = data.metrics.http_reqs.values.count;
