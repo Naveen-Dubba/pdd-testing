@@ -147,6 +147,7 @@ jobs:
   # -----------------------------------------------------
   appium-tests:
     name: Appium Mobile Tests
+    needs: selenium-e2e-tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -190,6 +191,7 @@ jobs:
   # -----------------------------------------------------
   build-apk:
     name: Build Flutter APK
+    needs: appium-tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -229,6 +231,7 @@ jobs:
   # -----------------------------------------------------
   load-testing:
     name: k6 Load Test
+    needs: build-apk
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -252,7 +255,7 @@ jobs:
   # -----------------------------------------------------
   verify-all:
     name: Verify All — 300 Web + 300 Android + 300 Backend
-    needs: [selenium-e2e-tests, appium-tests, load-testing]
+    needs: load-testing
     runs-on: ubuntu-latest
     if: always()
     steps:
